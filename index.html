@@ -49,6 +49,51 @@
             overflow-x: hidden;
             font-weight: 300;
             position: relative;
+            cursor: none;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor.hover {
+            width: 40px;
+            height: 40px;
+            border-color: var(--accent-warm);
+            background: rgba(224, 122, 79, 0.1);
+        }
+
+        .cursor-dot {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Reading progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-warm), var(--accent-amber));
+            z-index: 1000;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(61, 175, 160, 0.5);
         }
 
         /* Background noise texture */
@@ -141,9 +186,6 @@
         }
         .skip-nav:focus { top: 0; }
 
-        /* ========== Cursor ========== */
-        a, button { cursor: pointer; }
-
         /* ========== Header ========== */
         header {
             position: fixed;
@@ -161,6 +203,7 @@
         header.scrolled {
             background: rgba(13, 18, 16, 0.92);
             border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
         }
 
         .logo {
@@ -201,7 +244,7 @@
             display: none;
             background: none;
             border: 1px solid var(--border);
-            cursor: pointer;
+            cursor: none;
             padding: 0.5rem;
             color: var(--text);
             border-radius: var(--radius);
@@ -303,6 +346,21 @@
             line-height: 0.95;
             letter-spacing: -0.01em;
             color: var(--text);
+            overflow: hidden;
+        }
+
+        .hero-name .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100%);
+            animation: charReveal 0.6s ease forwards;
+        }
+
+        @keyframes charReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero-name span {
@@ -316,6 +374,22 @@
             letter-spacing: 0.18em;
             text-transform: uppercase;
             margin-top: 0.5rem;
+            min-height: 1.2em;
+        }
+
+        .hero-sub .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--accent);
+            margin-left: 2px;
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
 
         .hero-desc {
@@ -325,6 +399,16 @@
             max-width: 380px;
             font-weight: 300;
             margin-top: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 1.2s forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero-divider {
@@ -332,6 +416,8 @@
             height: 1px;
             background: var(--border-accent);
             margin: 0.5rem 0;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 1s forwards;
         }
 
         .hero-tags {
@@ -339,6 +425,8 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-top: 0.5rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 1.4s forwards;
         }
 
         .hero-tag {
@@ -364,6 +452,7 @@
             align-items: center;
             justify-content: center;
             height: 420px;
+            perspective: 1000px;
         }
 
         .hero-card {
@@ -379,7 +468,8 @@
             flex-direction: column;
             justify-content: flex-end;
             padding: 2rem;
-            transition: border-color 0.4s ease;
+            transition: border-color 0.4s ease, transform 0.3s ease;
+            transform-style: preserve-3d;
         }
 
         .hero-card:hover { border-color: var(--border-accent); }
@@ -388,6 +478,30 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(160deg, #1a2e2a 0%, #0d1f1c 60%, #12180f 100%);
+        }
+
+        /* Animated gradient border */
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(45deg, var(--accent), var(--accent-warm), var(--accent-amber), var(--accent));
+            background-size: 300% 300%;
+            animation: gradientRotate 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .hero-card:hover::after {
+            opacity: 0.5;
+        }
+
+        @keyframes gradientRotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .hero-card-dot {
@@ -462,6 +576,37 @@
             letter-spacing: 0.1em;
         }
 
+        /* Sound wave bars */
+        .sound-wave {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            z-index: 2;
+        }
+
+        .sound-bar {
+            width: 3px;
+            background: var(--accent);
+            border-radius: 1px;
+            opacity: 0.6;
+            animation: soundWave 1.2s ease-in-out infinite;
+        }
+
+        .sound-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .sound-bar:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+        .sound-bar:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+        .sound-bar:nth-child(4) { height: 20px; animation-delay: 0.3s; }
+        .sound-bar:nth-child(5) { height: 10px; animation-delay: 0.4s; }
+        .sound-bar:nth-child(6) { height: 14px; animation-delay: 0.5s; }
+
+        @keyframes soundWave {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.3; }
+            50% { transform: scaleY(1); opacity: 0.8; }
+        }
+
         .hero-decor-tag {
             position: absolute;
             font-family: var(--font-mono);
@@ -528,6 +673,53 @@
             background: var(--text-muted);
         }
 
+        /* ========== Marquee ========== */
+        .marquee {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marqueeScroll 30s linear infinite;
+        }
+
+        .marquee:hover .marquee-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-item {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0 2rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .marquee-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
+            flex-shrink: 0;
+        }
+
         /* ========== Section Layout ========== */
         main {
             max-width: 1300px;
@@ -553,7 +745,7 @@
             width: 8px;
             height: 8px;
             background: var(--bg);
-                       border: 1px solid var(--border);
+            border: 1px solid var(--border);
             border-radius: 50%;
         }
 
@@ -609,6 +801,8 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
         .project-card::before {
@@ -908,6 +1102,39 @@
             display: inline-block;
         }
 
+        /* ========== Back to Top ========== */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            background: var(--bg);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 90;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
         /* ========== Animations ========== */
         /* Hero entrance */
         .hero-left > * {
@@ -1063,6 +1290,9 @@
             .contact-link { padding: 1.1rem 1.25rem; font-size: 0.84rem; }
 
             footer { padding: 2rem 1.25rem; }
+
+            .cursor, .cursor-dot { display: none; }
+            body { cursor: auto; }
         }
 
         /* Safe area */
@@ -1085,6 +1315,13 @@
 <body>
     <a href="#main-content" class="skip-nav">跳过导航</a>
     <div class="nav-backdrop" id="nav-backdrop" aria-hidden="true"></div>
+
+    <!-- Custom cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+
+    <!-- Reading progress bar -->
+    <div class="progress-bar" id="progress-bar"></div>
 
     <header id="site-header">
         <a href="#" class="logo" aria-label="菌子 - 返回顶部">菌子</a>
@@ -1111,8 +1348,8 @@
         <section class="hero" aria-label="个人介绍">
             <div class="hero-left">
                 <p class="hero-index">Gamer · Creator</p>
-                <h1 class="hero-name">你好<br>我是<span>菌子</span></h1>
-                <p class="hero-sub">A Game Enthusiast</p>
+                <h1 class="hero-name" id="hero-name">你好<br>我是<span>菌子</span></h1>
+                <p class="hero-sub" id="hero-sub"><span class="typing-cursor"></span></p>
                 <div class="hero-divider"></div>
                 <p class="hero-desc">一名普通的游戏玩家兼创作者，专注于小众新奇的游戏体验。热衷于探索那些被遗忘的角落——独立游戏、实验性玩法、以及一切能让玩家会心一笑的瞬间。</p>
                 <div class="hero-tags">
@@ -1122,187 +1359,7 @@
                 </div>
             </div>
             <div class="hero-right" aria-hidden="true">
-                <div class="hero-card">
+                <div class="hero-card" id="hero-card">
                     <div class="hero-card-inner"></div>
-                    <div class="hero-card-dot"></div>
-                    <div class="hero-card-lines">
-                        <div class="hero-card-line"></div>
-                        <div class="hero-card-line"></div>
-                        <div class="hero-card-line"></div>
-                        <div class="hero-card-line"></div>
-                        <div class="hero-card-line"></div>
-                    </div>
-                    <div class="hero-card-footer">
-                        <div>
-                            <div class="hero-card-title">DELTARUNE</div>
-                            <div class="hero-card-sub">三角符文 · 正在游玩</div>
-                        </div>
-                        <span class="hero-card-badge">LIVE</span>
-                    </div>
-                </div>
-                <div class="hero-decor-tag hero-decor-tag-1">since 2026</div>
-            </div>
-            <div class="hero-corner hero-corner-tl" aria-hidden="true"></div>
-            <div class="hero-corner hero-corner-br" aria-hidden="true"></div>
-            <div class="scroll-hint" aria-hidden="true">向下滚动</div>
-        </section>
-
-        <!-- Projects -->
-        <section id="projects" aria-labelledby="projects-heading">
-            <div class="section-header">
-                <span class="section-num">01</span>
-                <h2 class="section-title" id="projects-heading">记录</h2>
-                <span class="section-desc">Things I've made</span>
-            </div>
-            <div class="projects-grid">
-                <article class="project-card fade-up">
-                    <div class="project-card-header">
-                        <span class="project-year">开发中</span>
-                    </div>
-                    <h3>ARG 解谜游戏</h3>
-                    <p>一款网页端 ARG（侵入式虚拟现实）类型的解谜游戏。正在开发中，希望能给玩家带来独特的沉浸式体验。</p>
-                    <div class="project-links">
-                        <a href="#" aria-label="查看进度">
-                            <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                            敬请期待
-                        </a>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- About -->
-        <section id="about" aria-labelledby="about-heading">
-            <div class="section-header">
-                <span class="section-num">02</span>
-                <h2 class="section-title" id="about-heading">关于</h2>
-                <span class="section-desc">About me</span>
-            </div>
-            <div class="about-grid">
-                <div class="about-text">
-                    <p>只是一名喜欢玩游戏的普通大学生罢了。</p>
-                    <p>热衷于探索那些被遗忘的角落——独立游戏、实验性玩法、以及一切能让玩家会心一笑的瞬间。如果你在找值得一玩的冷门游戏，或者在做一个有意思的项目，欢迎来找我聊聊。</p>
-                    <p>我相信游戏本质上是一种体验，而好的体验值得被认真对待——无论是自己玩到的，还是做出来分享给同好的。</p>
-                </div>
-                <aside class="about-sidebar" aria-label="关于我的详细信息">
-                    <div class="about-item">
-                        <div class="about-item-label">身份</div>
-                        <div class="about-item-value">大学生 / 游戏创作者</div>
-                    </div>
-                    <div class="about-item">
-                        <div class="about-item-label">兴趣方向</div>
-                        <div class="about-item-value">独立游戏 · 实验性玩法 · 叙事设计</div>
-                    </div>
-                    <div class="about-item">
-                        <div class="about-item-label">活跃年份</div>
-                        <div class="about-item-value">2026 至今</div>
-                    </div>
-                    <div class="about-item">
-                        <div class="about-item-label">座右铭</div>
-                        <div class="about-item-value">人生是偶然，离开那些曾吞没你的欲望吧</div>
-                    </div>
-                </aside>
-            </div>
-        </section>
-
-        <!-- Contact -->
-        <section id="contact" aria-labelledby="contact-heading">
-            <div class="section-header">
-                <span class="section-num">03</span>
-                <h2 class="section-title" id="contact-heading">找我</h2>
-                <span class="section-desc">Get in touch</span>
-            </div>
-            <nav class="contact-list" aria-label="联系方式">
-                <a href="mailto:2736455647@qq.com" class="contact-link" aria-label="给我发邮件">
-                    <div class="contact-link-left">
-                        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></svg>
-                        <span>2736455647@qq.com</span>
-                    </div>
-                    <span class="contact-arrow">→</span>
-                </a>
-                <a href="https://www.xiaohongshu.com/user/profile/6429c17900000000110214fb" class="contact-link" target="_blank" rel="noopener noreferrer" aria-label="小红书（在新窗口打开）">
-                    <div class="contact-link-left">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2"/></svg>
-                        <span>小红书</span>
-                    </div>
-                    <span class="contact-arrow">↗</span>
-                </a>
-            </nav>
-        </section>
-
-    </main>
-
-    <footer>
-        <p>© 2026 菌子 · 感谢来访</p>
-        <div class="footer-right">
-            <span class="footer-dot"></span>
-            <span>Built with intent</span>
-        </div>
-    </footer>
-
-    <script>
-        (function () {
-            'use strict';
-
-            // Header scroll
-            var header = document.getElementById('site-header');
-            window.addEventListener('scroll', function () {
-                header.classList.toggle('scrolled', window.scrollY > 40);
-            }, { passive: true });
-
-            // Fade in on scroll
-            var io = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                    if (e.isIntersecting) {
-                        e.target.classList.add('visible');
-                        io.unobserve(e.target);
-                    }
-                });
-            }, { threshold: 0.08 });
-
-            document.querySelectorAll('.fade-up').forEach(function (el) { io.observe(el); });
-
-            // Smooth scroll
-            document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-                a.addEventListener('click', function (e) {
-                    var t = document.querySelector(a.getAttribute('href'));
-                    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-                });
-            });
-
-            // Mobile nav
-            var toggle = document.querySelector('.nav-toggle');
-            var nav = document.querySelector('.nav-links');
-            var backdrop = document.getElementById('nav-backdrop');
-
-            function closeNav() {
-                nav.classList.remove('open');
-                backdrop.classList.remove('visible');
-                toggle.setAttribute('aria-expanded', 'false');
-                document.body.style.overflow = '';
-            }
-
-            function openNav() {
-                nav.classList.add('open');
-                backdrop.classList.add('visible');
-                toggle.setAttribute('aria-expanded', 'true');
-                document.body.style.overflow = 'hidden';
-            }
-
-            if (toggle && nav) {
-                toggle.addEventListener('click', function () {
-                    nav.classList.contains('open') ? closeNav() : openNav();
-                });
-
-                backdrop && backdrop.addEventListener('click', closeNav);
-
-                nav.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', closeNav); });
-
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape' && nav.classList.contains('open')) { closeNav(); toggle.focus(); }
-                });
-            }
-        })();
-    </script>
-</body>
-</html>
+                    <div class="sound-wave">
+                        <div class="sound-bar"></div>
